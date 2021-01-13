@@ -85,7 +85,7 @@ class Table extends Component {
 
     handleExportClick = async () => {
         const result = await this.getExportData()
-        if(result && result.length > 0 ){
+        if(result && result.length > 1 ){
             buttonRef.current.link.click()
         }else{
             alert("Please select data to export.")
