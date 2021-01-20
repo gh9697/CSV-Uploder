@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CSVReader } from 'react-papaparse';
 import Table from './component/Table';
 import './App.css';

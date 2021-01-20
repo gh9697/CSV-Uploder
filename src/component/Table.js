@@ -10,6 +10,7 @@ class Table extends Component {
         super(props);
         this.state = { 
             exportdata : [],
+            currentView : "table",
         }
     } 
 
@@ -65,8 +66,8 @@ class Table extends Component {
     getExportData = async()  => {
         const exportData = []
         const hederValue = []
-        document.querySelectorAll('select').forEach(node =>{
-            hederValue.push(node.value);
+        document.querySelectorAll('th > span').forEach(node =>{
+            hederValue.push(node.innerHTML.toUpperCase());
         })
         exportData.push(hederValue);
         document.querySelectorAll('.selection').forEach(node =>{
@@ -95,7 +96,7 @@ class Table extends Component {
 
     filter = (row,filter) => {
         var text = row.textContent.toLowerCase();
-        row.style.display = text.indexOf(filter.toLowerCase()) === -1 ? 'none': 'table-row';
+        row.style.display = text.indexOf(filter.toLowerCase()) === -1 ? 'none': 'table';
     }
 
     handleFilter = (input) => {
@@ -106,44 +107,61 @@ class Table extends Component {
         });
     }
 
+    static getDerivedStateFromProps(props, state) {
+        if(!props.data){
+            return {currentView: 'table' };
+        }else{
+            return {};
+        }
+    }
+
     render() {
+
         return (
             <div>
-                <div className="tasks">
-                    <input type="search" className="table-filter" data-table="order-table" 
-                        placeholder="Filter" onChange={(input) => this.handleFilter(input)}/>
-                    <button onClick={this.handleDeleteClick}>Delete Row(s)</button>
-                    <button onClick={this.handleExportClick}>Export Row(s)</button>
-                    <CSVLink
-                        data={this.state.exportdata}
-                        filename={'UserData.csv'}
-                        className="hidden"
-                        ref={buttonRef}
-                        target="_blank" 
-                    />
-                </div>
-                <table id="Info">
-                    <thead>
-                        <tr>
-                            <th><input id="select-all" type="checkbox" onClick={(e) => this.handleClick(e)}/></th>
-                            {this.props.data && this.props.data[0] &&
-                                this.props.data[0].data.map(() => {
-                                    return <th><HeadSelector/></th>
+                { this.props.data && this.props.data[0] &&
+                <div className="main">
+                    {this.state.currentView === "mappedTable" &&
+                        <div className="tasks">
+                            <input type="search" className="table-filter" data-table="order-table" 
+                                placeholder="Filter" onChange={(input) => this.handleFilter(input)}/>
+                            <button onClick={this.handleDeleteClick}>Delete Row(s)</button>
+                            <button onClick={this.handleExportClick}>Export Row(s)</button>
+                            <CSVLink
+                                data={this.state.exportdata}
+                                filename={'UserData.csv'}
+                                className="hidden"
+                                ref={buttonRef}
+                                target="_blank" 
+                            />
+                        </div>}
+                    <table id="Info">
+                        <thead>
+                            <tr>
+                                {this.state.currentView === "mappedTable" &&
+                                    <th><input id="select-all" type="checkbox" onClick={(e) => this.handleClick(e)}/></th>}
+                                {this.props.data[0].data.map(() => {
+                                        return <th><HeadSelector currentView={this.state.currentView}/></th>
+                                    })
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {  
+                                this.props.data.map((value,index) => {
+                                    return <tr key={index} data-index={index}>
+                                            {this.state.currentView === "mappedTable" &&
+                                                <td><input type="checkbox" onClick={(e) => this.handleSingleCheck(e)}/></td>}
+                                            {this.renderTableData(value)}
+                                        </tr>;
                                 })
                             }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { this.props.data &&   
-                            this.props.data.map((value,index) => {
-                                return <tr key={index} data-index={index}>
-                                        <td><input type="checkbox" onClick={(e) => this.handleSingleCheck(e)}/></td>
-                                        {this.renderTableData(value)}
-                                    </tr>;
-                            })
-                        }
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                    {this.state.currentView !== "mappedTable" &&
+                        <button className="next-btn" style={{float:"right"}} onClick={() => this.setState({currentView : "mappedTable"})}>Next</button>
+                    }
+                </div>}
             </div>
         )
     }

@@ -7,10 +7,20 @@
   table-layout: fixed;
 }
 
+#Info tbody {
+  display: block;
+  height: 40vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 #Info tr {
   background-color: #f8f8f8;
   border: 1px solid #ddd;
   padding: 0.35em;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 #Info th,
@@ -29,7 +39,8 @@
   margin: 15px;
 }
 
-.tasks button {
+.tasks button,
+.next-btn {
   padding: 15px;
   margin: 20px;
   color: #fff !important;
@@ -39,7 +50,8 @@
   outline: none;
   font-weight: 600;
 }
-.tasks button:hover {
+.tasks button:hover,
+.next-btn:hover {
   box-shadow: 8px 1px 12px 0px rgba(0, 0, 0, 0.31);
 }
 .table-filter {
